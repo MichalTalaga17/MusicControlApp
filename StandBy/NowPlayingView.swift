@@ -22,12 +22,10 @@ struct MusicControlView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            // Wyświetlanie aktualnej godziny
             Text(currentTime)
-                .font(.largeTitle)
+                .font(.largeTitle .bold())
                 .padding()
             
-            // Wyświetlanie okładki albumu
             if let albumImage = albumArtwork {
                 Image(uiImage: albumImage)
                     .resizable()
@@ -44,7 +42,6 @@ struct MusicControlView: View {
                     .padding(.bottom, 10)
             }
             
-            // Wyświetlanie aktualnie odtwarzanej piosenki i wykonawcy
             VStack {
                 Text(songTitle)
                     .font(.title2)
@@ -58,9 +55,8 @@ struct MusicControlView: View {
                     .lineLimit(1)
             }
             
-            // Pasek postępu utworu
             Slider(value: $currentPlaybackTime, in: 0...trackDuration)
-                .accentColor(.blue)
+                .accentColor(.primary)
                 .padding(.horizontal)
             
             HStack {
@@ -72,36 +68,32 @@ struct MusicControlView: View {
             }
             .padding(.horizontal, 20)
             
-            // Przyciski do kontrolowania muzyki
             HStack(spacing: 50) {
-                // Poprzedni utwór
                 Button(action: {
                     musicPlayer.skipToPreviousItem()
                 }) {
                     Image(systemName: "backward.fill")
                         .resizable()
                         .frame(width: 40, height: 40)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(Color.primary)
                 }
                 
-                // Odtwarzanie/Wstrzymanie
                 Button(action: {
                     togglePlayPause()
                 }) {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .resizable()
                         .frame(width: 60, height: 60)
-                        .foregroundColor(.green)
+                        .foregroundStyle(Color.primary)
                 }
                 
-                // Następny utwór
                 Button(action: {
                     musicPlayer.skipToNextItem()
                 }) {
                     Image(systemName: "forward.fill")
                         .resizable()
                         .frame(width: 40, height: 40)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(Color.primary)
                 }
             }
         }
@@ -111,7 +103,6 @@ struct MusicControlView: View {
             updatePlayState()
             updateNowPlayingInfo()
             
-            // Nasłuchiwanie zmian stanu odtwarzacza i informacji o utworze
             NotificationCenter.default.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: .main) { _ in
                 updateNowPlayingInfo()
             }
@@ -128,7 +119,6 @@ struct MusicControlView: View {
         }
     }
     
-    // Funkcja do aktualizacji aktualnej godziny co sekundę
     private func startTimer() {
         updateTime()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
@@ -138,12 +128,16 @@ struct MusicControlView: View {
     }
     
     private func updateTime() {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .medium
-        currentTime = formatter.string(from: Date())
+        let date = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        
+        let formattedHour = hour < 10 ? "0\(hour)" : "\(hour)"
+        let formattedMinute = minute < 10 ? "0\(minute)" : "\(minute)"
+        currentTime = "\(formattedHour):\(formattedMinute)"
     }
     
-    // Funkcja do przełączania między odtwarzaniem a wstrzymaniem
     private func togglePlayPause() {
         if musicPlayer.playbackState == .playing {
             musicPlayer.pause()
@@ -152,12 +146,10 @@ struct MusicControlView: View {
         }
     }
     
-    // Aktualizacja stanu przycisku Play/Pause
     private func updatePlayState() {
         isPlaying = musicPlayer.playbackState == .playing
     }
     
-    // Funkcja do pobierania informacji o aktualnie odtwarzanej piosence
     private func updateNowPlayingInfo() {
         if let nowPlayingItem = musicPlayer.nowPlayingItem {
             songTitle = nowPlayingItem.title ?? "Nieznany tytuł"
@@ -177,12 +169,10 @@ struct MusicControlView: View {
         }
     }
     
-    // Funkcja do aktualizacji aktualnego czasu odtwarzania
     private func updatePlaybackTime() {
         currentPlaybackTime = musicPlayer.currentPlaybackTime
     }
     
-    // Funkcja formatowania czasu w formacie mm:ss
     private func timeFormatted(_ time: TimeInterval) -> String {
         let minutes = Int(time) / 60
         let seconds = Int(time) % 60
