@@ -3,40 +3,40 @@
 ![Xcode](https://img.shields.io/badge/Xcode-007ACC?style=for-the-badge&logo=Xcode&logoColor=white)
 ![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
 
-Projekt "Music Control View" to aplikacja mobilna, która umożliwia użytkownikowi kontrolowanie odtwarzania muzyki za pomocą intuicyjnego interfejsu. Aplikacja wyświetla aktualną godzinę, tytuł utworu, wykonawcę, okładkę albumu oraz pasek postępu utworu, a także umożliwia odtwarzanie, pauzowanie i przechodzenie do następnych lub poprzednich utworów.
+The **Music Control View** project is a mobile application that allows the user to control music playback through an intuitive interface. The app displays the current time, the song title, artist name, album cover, and a progress bar for the song. It also enables play, pause, and navigation to the next or previous tracks.
 
-## Funkcje
+## Features
 
-- **Aktualna godzina** - na górze ekranu wyświetlana jest bieżąca godzina.
-- **Okładka albumu** - pokazuje okładkę albumu aktualnie odtwarzanego utworu, jeśli jest dostępna.
-- **Tytuł i wykonawca** - wyświetla tytuł utworu oraz nazwisko wykonawcy.
-- **Pasek postępu** - umożliwia użytkownikowi śledzenie czasu odtwarzanego utworu oraz ręczne przeskakiwanie do innej części utworu.
-- **Kontrola muzyki** - umożliwia odtwarzanie, pauzowanie oraz przechodzenie do następnego i poprzedniego utworu.
+- **Current time** - The top of the screen displays the current time.
+- **Album cover** - Shows the album cover of the currently playing song, if available.
+- **Song title and artist** - Displays the song title and artist name.
+- **Progress bar** - Allows the user to track the progress of the song and manually skip to a different part of the track.
+- **Music control** - Enables play, pause, and navigation to the next and previous tracks.
 
-## Technologie
+## Technologies
 
-Aplikacja została stworzona w języku **Swift** z użyciem frameworku **SwiftUI**. Wykorzystuje następujące technologie i biblioteki:
+The application is built using **Swift** and **SwiftUI**. It uses the following technologies and libraries:
 
-- **SwiftUI** - do budowy interfejsu użytkownika.
-- **MediaPlayer** - do obsługi odtwarzania muzyki i zarządzania odtwarzaczem systemowym.
+- **SwiftUI** - For building the user interface.
+- **MediaPlayer** - For handling music playback and managing the system's media player.
 
-## Instalacja
+## Installation
 
-1. Sklonuj ten repozytorium na swoje urządzenie:
+1. Clone the repository to your device:
     ```bash
     git clone https://github.com/MichalTalaga17/music-control-view.git
     ```
 
-2. Otwórz projekt w Xcode.
+2. Open the project in Xcode.
 
-3. Uruchom aplikację na symulatorze lub rzeczywistym urządzeniu.
+3. Run the application on a simulator or a real device.
 
-## Użycie
+## Usage
 
-1. Po uruchomieniu aplikacji na ekranie pojawi się aktualna godzina oraz informacje o odtwarzanym utworze.
-2. Możesz sterować odtwarzaniem muzyki za pomocą przycisków do przeskakiwania utworów oraz przycisku play/pause.
-   
-## Przyszłe funkcje
+1. After launching the app, the current time and information about the playing song will be displayed on the screen.
+2. You can control music playback using the buttons to skip tracks and the play/pause button.
 
-- **Tło z gradientem** - dynamiczne tło generowane na podstawie dominujących kolorów z okładki albumu.
-- **Tryb ciemny** - dostosowanie interfejsu użytkownika do trybu ciemnego systemu.
+## Future Features
+
+- **Gradient background** - A dynamic background generated based on the dominant colors from the album cover.
+- **Dark mode** - Adjusting the user interface to the system's dark mode.
