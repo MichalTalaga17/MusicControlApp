@@ -21,40 +21,86 @@ struct MusicControlView: View {
     let musicPlayer = MPMusicPlayerController.systemMusicPlayer
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text(currentTime)
-                .font(.largeTitle .bold())
-                .padding()
-            
-            if let albumImage = albumArtwork {
-                Image(uiImage: albumImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200, height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.bottom, 10)
-            } else {
-                Image(systemName: "music.note")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200, height: 200)
-                    .foregroundColor(.gray)
-                    .padding(.bottom, 10)
-            }
-            
-            VStack {
-                Text(songTitle)
-                    .font(.title2)
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
-                    .padding(.top, 5)
+        GeometryReader { geometry in
+            let isLandscape = geometry.size.width > geometry.size.height
+            VStack(spacing: 20) {
+                Text(currentTime)
+                    .font(.largeTitle .bold())
+                    .padding()
                 
-                Text(artistName)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
+                if let albumImage = albumArtwork {
+                    Image(uiImage: albumImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: isLandscape ? 150 : 200, height: isLandscape ? 150 : 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.bottom, 10)
+                } else {
+                    Image(systemName: "music.note")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: isLandscape ? 150 : 200, height: isLandscape ? 150 : 200)
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 10)
+                }
+                
+                if isLandscape {
+                    // Widok poziomy - układ horyzontalny
+                    HStack(spacing: 20) {
+                        songInfoView()
+                        controlButtonsView()
+                    }
+                } else {
+                    // Widok pionowy - układ wertykalny
+                    songInfoView()
+                    playbackSlider()
+                    controlButtonsView()
+                }
             }
+            .padding()
+            .onAppear {
+                UIApplication.shared.isIdleTimerDisabled = true  // Zapobiega wygaszaniu ekranu
+                startTimer()
+                updatePlayState()
+                updateNowPlayingInfo()
+                
+                NotificationCenter.default.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: .main) { _ in
+                    updateNowPlayingInfo()
+                }
+                
+                NotificationCenter.default.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: .main) { _ in
+                    updatePlayState()
+                }
+                
+                musicPlayer.beginGeneratingPlaybackNotifications()
+            }
+            .onDisappear {
+                UIApplication.shared.isIdleTimerDisabled = false  // Przywraca domyślne wygaszanie ekranu
+                timer?.invalidate()
+                musicPlayer.endGeneratingPlaybackNotifications()
+            }
+        }
+    }
+    
+    // Widok dla informacji o utworze
+    private func songInfoView() -> some View {
+        VStack {
+            Text(songTitle)
+                .font(.title2)
+                .foregroundColor(.primary)
+                .lineLimit(1)
+                .padding(.top, 5)
             
+            Text(artistName)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+        }
+    }
+    
+    // Widok dla suwaka czasu odtwarzania
+    private func playbackSlider() -> some View {
+        VStack {
             Slider(value: $currentPlaybackTime, in: 0...trackDuration)
                 .accentColor(.primary)
                 .padding(.horizontal)
@@ -67,55 +113,38 @@ struct MusicControlView: View {
                     .font(.caption)
             }
             .padding(.horizontal, 20)
-            
-            HStack(spacing: 50) {
-                Button(action: {
-                    musicPlayer.skipToPreviousItem()
-                }) {
-                    Image(systemName: "backward.fill")
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .foregroundStyle(Color.primary)
-                }
-                
-                Button(action: {
-                    togglePlayPause()
-                }) {
-                    Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .foregroundStyle(Color.primary)
-                }
-                
-                Button(action: {
-                    musicPlayer.skipToNextItem()
-                }) {
-                    Image(systemName: "forward.fill")
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .foregroundStyle(Color.primary)
-                }
-            }
         }
-        .padding()
-        .onAppear {
-            startTimer()
-            updatePlayState()
-            updateNowPlayingInfo()
-            
-            NotificationCenter.default.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: .main) { _ in
-                updateNowPlayingInfo()
+    }
+    
+    // Widok dla przycisków sterowania
+    private func controlButtonsView() -> some View {
+        HStack(spacing: 50) {
+            Button(action: {
+                musicPlayer.skipToPreviousItem()
+            }) {
+                Image(systemName: "backward.fill")
+                    .resizable()
+                    .frame(width: 50, height: 30)
+                    .foregroundStyle(Color.primary)
             }
             
-            NotificationCenter.default.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: .main) { _ in
-                updatePlayState()
+            Button(action: {
+                togglePlayPause()
+            }) {
+                Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                    .resizable()
+                    .frame(width: 45, height: 45)
+                    .foregroundStyle(Color.primary)
             }
             
-            musicPlayer.beginGeneratingPlaybackNotifications()
-        }
-        .onDisappear {
-            timer?.invalidate()
-            musicPlayer.endGeneratingPlaybackNotifications()
+            Button(action: {
+                musicPlayer.skipToNextItem()
+            }) {
+                Image(systemName: "forward.fill")
+                    .resizable()
+                    .frame(width: 50, height: 30)
+                    .foregroundStyle(Color.primary)
+            }
         }
     }
     
