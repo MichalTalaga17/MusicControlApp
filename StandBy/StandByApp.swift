@@ -25,7 +25,7 @@ struct StandByApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MusicControlView()
         }
         .modelContainer(sharedModelContainer)
     }
